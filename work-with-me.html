@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work with Me — Ziyue (Brian) Wang, PhD</title>
     <link rel="stylesheet" href="style.css">
+<script src="auth.js"></script>
 </head>
 <body>
+<!-- Password Gate -->
+<div class="password-gate">
+    <div class="password-box">
+        <h2>Ziyue (Brian) Wang</h2>
+        <p>This site is currently in preview. Please enter the password to continue.</p>
+        <input type="password" id="pwd-input" placeholder="Enter password" autocomplete="off">
+        <button onclick="tryPassword()">Enter</button>
+        <div class="error-msg" id="pwd-error">Incorrect password. Please try again.</div>
+    </div>
+</div>
+
+<!-- Site Content (hidden until authenticated) -->
+<div class="site-content">
 
 <nav>
     <div class="nav-inner">
@@ -56,5 +70,6 @@
     &copy; 2026 Ziyue (Brian) Wang. All rights reserved.
 </footer>
 
+</div>
 </body>
 </html>

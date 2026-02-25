@@ -479,6 +479,88 @@ section { padding: 5rem 2rem; }
     margin-bottom: 1rem;
 }
 
+/* ---- Password Gate ---- */
+.password-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--accent-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.password-box {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+.password-box h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+.password-box p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+.password-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+}
+.password-box input:focus {
+    border-color: var(--accent);
+}
+.password-box input.error {
+    border-color: #e53e3e;
+    animation: shake 0.4s ease;
+}
+.password-box button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.password-box button:hover {
+    background: var(--primary-light);
+}
+.password-box .error-msg {
+    color: #e53e3e;
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    display: none;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+.site-content { display: none; }
+.site-content.unlocked { display: block; }
+
 /* ---- Footer ---- */
 footer {
     text-align: center;
