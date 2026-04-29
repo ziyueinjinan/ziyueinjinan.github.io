@@ -22,16 +22,14 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install scholarly
+        run: pip install scholarly free-proxy
 
       - name: Fetch Google Scholar publications
         run: python scripts/update_publications.py
         env:
-          # scholarly may need a proxy to avoid rate limits.
-          # If you get blocked, you can set up a ScraperAPI or
-          # similar service and add the key as a GitHub secret.
-          # SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
           PYTHONUNBUFFERED: '1'
+        timeout-minutes: 5
 
       - name: Check for changes
         id: changes
