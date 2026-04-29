@@ -1,0 +1,48 @@
+name: Update Publications from Google Scholar
+
+on:
+  schedule:
+    # Run every day at 6:00 AM UTC (adjust as you like)
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-publications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install scholarly
+
+      - name: Fetch Google Scholar publications
+        run: python scripts/update_publications.py
+        env:
+          # scholarly may need a proxy to avoid rate limits.
+          # If you get blocked, you can set up a ScraperAPI or
+          # similar service and add the key as a GitHub secret.
+          # SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          PYTHONUNBUFFERED: '1'
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet scholar_publications.json && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add scholar_publications.json
+          git commit -m "chore: update publications from Google Scholar [automated]"
+          git push
