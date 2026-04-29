@@ -116,16 +116,57 @@ OVERRIDES = {
 def fetch_from_scholar():
     """Fetch publications from Google Scholar using the scholarly library."""
     try:
-        from scholarly import scholarly
+        from scholarly import scholarly, ProxyGenerator
     except ImportError:
         print("Installing scholarly...")
         import subprocess
         subprocess.check_call([sys.executable, "-m", "pip", "install", "scholarly", "--quiet"])
-        from scholarly import scholarly
+        from scholarly import scholarly, ProxyGenerator
+
+    # --- Set up proxy to avoid Google Scholar blocking GitHub Actions IPs ---
+    # Option 1: Free proxies (no cost, but can be slow/unreliable)
+    # Option 2: ScraperAPI (more reliable, requires API key set as GitHub secret)
+    scraper_api_key = os.environ.get("SCRAPER_API_KEY", "")
+    pg = ProxyGenerator()
+    if scraper_api_key:
+        print("Using ScraperAPI proxy...")
+        pg.ScraperAPI(scraper_api_key)
+    else:
+        print("Using free proxies (set SCRAPER_API_KEY for better reliability)...")
+        try:
+            pg.FreeProxies()
+        except Exception as e:
+            print(f"Warning: Free proxy setup failed ({e}), trying without proxy...")
+            pg = None
+    if pg:
+        scholarly.use_proxy(pg)
 
     print(f"Fetching Google Scholar profile: {SCHOLAR_ID}")
-    author = scholarly.search_author_id(SCHOLAR_ID)
-    author = scholarly.fill(author, sections=["publications"])
+
+    # Retry logic for resilience
+    max_retries = 3
+    author = None
+    for attempt in range(max_retries):
+        try:
+            author = scholarly.search_author_id(SCHOLAR_ID)
+            author = scholarly.fill(author, sections=["publications"])
+            break
+        except Exception as e:
+            print(f"  Attempt {attempt+1}/{max_retries} failed: {e}")
+            if attempt < max_retries - 1:
+                wait = 10 * (attempt + 1)
+                print(f"  Retrying in {wait}s...")
+                time.sleep(wait)
+                # Try a new proxy
+                if pg:
+                    try:
+                        pg.FreeProxies()
+                        scholarly.use_proxy(pg)
+                    except:
+                        pass
+            else:
+                print("All retries failed. Exiting.")
+                sys.exit(1)
 
     publications = []
     for pub in author.get("publications", []):
