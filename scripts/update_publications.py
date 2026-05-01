@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Fetch publications from Google Scholar and generate a JSON data file.
+Fetch publications from Google Scholar via SerpAPI and generate a JSON data file.
 Used by GitHub Actions to keep the website's publication list in sync.
+
+Requires: SERPAPI_KEY environment variable (get free key at https://serpapi.com)
 
 Usage:
     python scripts/update_publications.py
@@ -14,6 +16,8 @@ import json
 import os
 import sys
 import time
+import urllib.request
+import urllib.parse
 
 # ---------------------------------------------------------------------------
 # Configuration — change these to match your profile
@@ -24,7 +28,6 @@ YOUR_LAST_NAME = "Wang"               # Used to detect first-authorship
 YOUR_FIRST_INITIAL = "Z"
 
 # Manual entries that won't appear on Google Scholar (under review, working papers, etc.)
-# These are merged into the final JSON so everything shows in one place.
 MANUAL_ENTRIES = [
     {
         "title": "Where State, Market, and Community Meet: Village Doctors and the Governance of Rural Health in China",
@@ -79,8 +82,6 @@ MANUAL_ENTRIES = [
 ]
 
 # Overrides: map a paper title (lowercased) to extra metadata.
-# Use this to add badges, highlight status, or correct first-author detection.
-# Titles are matched case-insensitively (partial match from the start).
 OVERRIDES = {
     "older adults' experiences of health seeking in rural areas": {
         "extra_types": ["highlight"],
@@ -113,96 +114,83 @@ OVERRIDES = {
 # ---------------------------------------------------------------------------
 
 
-def fetch_from_scholar():
-    """Fetch publications from Google Scholar using the scholarly library."""
-    try:
-        from scholarly import scholarly, ProxyGenerator
-    except ImportError:
-        print("Installing scholarly...")
-        import subprocess
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "scholarly", "--quiet"])
-        from scholarly import scholarly, ProxyGenerator
+def serpapi_request(params):
+    """Make a request to SerpAPI and return JSON response."""
+    base_url = "https://serpapi.com/search.json"
+    query_string = urllib.parse.urlencode(params)
+    url = f"{base_url}?{query_string}"
 
-    # --- Set up proxy to avoid Google Scholar blocking GitHub Actions IPs ---
-    # Option 1: Free proxies (no cost, but can be slow/unreliable)
-    # Option 2: ScraperAPI (more reliable, requires API key set as GitHub secret)
-    scraper_api_key = os.environ.get("SCRAPER_API_KEY", "")
-    pg = ProxyGenerator()
-    if scraper_api_key:
-        print("Using ScraperAPI proxy...")
-        pg.ScraperAPI(scraper_api_key)
-    else:
-        print("Using free proxies (set SCRAPER_API_KEY for better reliability)...")
-        try:
-            pg.FreeProxies()
-        except Exception as e:
-            print(f"Warning: Free proxy setup failed ({e}), trying without proxy...")
-            pg = None
-    if pg:
-        scholarly.use_proxy(pg)
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=30) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def fetch_from_scholar():
+    """Fetch publications from Google Scholar using SerpAPI."""
+    api_key = os.environ.get("SERPAPI_KEY", "")
+    if not api_key:
+        print("ERROR: SERPAPI_KEY environment variable is not set.")
+        print("Get a free API key at https://serpapi.com/users/sign_up")
+        print("Then add it as a GitHub repository secret named SERPAPI_KEY")
+        sys.exit(1)
 
     print(f"Fetching Google Scholar profile: {SCHOLAR_ID}")
 
-    # Retry logic for resilience
-    max_retries = 3
-    author = None
-    for attempt in range(max_retries):
-        try:
-            author = scholarly.search_author_id(SCHOLAR_ID)
-            author = scholarly.fill(author, sections=["publications"])
+    all_articles = []
+    start = 0
+    page_size = 100  # SerpAPI returns up to 100 per page
+
+    while True:
+        print(f"  Fetching articles starting from index {start}...")
+        params = {
+            "engine": "google_scholar_author",
+            "author_id": SCHOLAR_ID,
+            "api_key": api_key,
+            "start": start,
+            "num": page_size,
+            "sort": "pubdate"  # Sort by publication date
+        }
+
+        data = serpapi_request(params)
+        articles = data.get("articles", [])
+
+        if not articles:
             break
-        except Exception as e:
-            print(f"  Attempt {attempt+1}/{max_retries} failed: {e}")
-            if attempt < max_retries - 1:
-                wait = 10 * (attempt + 1)
-                print(f"  Retrying in {wait}s...")
-                time.sleep(wait)
-                # Try a new proxy
-                if pg:
-                    try:
-                        pg.FreeProxies()
-                        scholarly.use_proxy(pg)
-                    except:
-                        pass
-            else:
-                print("All retries failed. Exiting.")
-                sys.exit(1)
 
+        all_articles.extend(articles)
+        print(f"  Got {len(articles)} articles (total so far: {len(all_articles)})")
+
+        # Check if there are more pages
+        if len(articles) < page_size:
+            break
+
+        start += page_size
+        time.sleep(1)  # Be polite
+
+    print(f"\nTotal articles fetched: {len(all_articles)}")
+
+    # Process each article
     publications = []
-    for pub in author.get("publications", []):
-        # Fill each publication for full details
-        try:
-            filled = scholarly.fill(pub)
-            time.sleep(1)  # Be polite to Google Scholar
-        except Exception as e:
-            print(f"  Warning: Could not fill details for '{pub.get('bib', {}).get('title', 'unknown')}': {e}")
-            filled = pub
+    for article in all_articles:
+        title = article.get("title", "")
+        authors = article.get("authors", "")
+        year = str(article.get("year", ""))
 
-        bib = filled.get("bib", {})
-        title = bib.get("title", "")
-        authors = bib.get("author", "")
-        journal = bib.get("journal", bib.get("venue", bib.get("publisher", "")))
-        year = str(bib.get("pub_year", ""))
-        volume = bib.get("volume", "")
-        number = bib.get("number", "")
-        pages = bib.get("pages", "")
+        # Get citation info (journal, volume, etc.)
+        citation = article.get("citation", "")
+        # SerpAPI returns citation as a string like "Journal Name, Volume(Issue), Pages, Year"
+        journal_str = citation if citation else ""
 
-        # Build journal string
-        journal_str = journal
-        if volume:
-            journal_str += f", {volume}"
-            if number:
-                journal_str += f"({number})"
-        if pages:
-            journal_str += f", {pages}"
-        if year:
+        # If journal_str doesn't include the year, append it
+        if year and year not in journal_str and journal_str:
             journal_str += f" ({year})"
+        elif year and not journal_str:
+            journal_str = f"({year})"
 
         # Detect first authorship
         is_first = False
         if authors:
-            # scholarly returns author names in various formats
-            first_author = authors.split(",")[0].strip().split(" and ")[0].strip()
+            first_author = authors.split(",")[0].strip()
             if YOUR_LAST_NAME.lower() in first_author.lower():
                 is_first = True
 
@@ -223,13 +211,13 @@ def fetch_from_scholar():
                     badge_class = override["badge_class"]
                 break
 
-        # Get DOI from pub_url or from bib
+        # Get link
         doi = ""
-        pub_url = filled.get("pub_url", "")
-        if "doi.org" in pub_url:
-            doi = pub_url
-        elif bib.get("doi"):
-            doi = f"https://doi.org/{bib['doi']}"
+        link = article.get("link", "")
+        if "doi.org" in link:
+            doi = link
+        elif link:
+            doi = link  # Use whatever link is available
 
         publications.append({
             "title": title,
@@ -237,26 +225,26 @@ def fetch_from_scholar():
             "journal": journal_str,
             "year": year,
             "doi": doi,
-            "type": list(set(pub_types)),  # deduplicate
+            "type": list(set(pub_types)),
             "badge": badge,
             "badge_class": badge_class
         })
 
-        print(f"  Fetched: {title[:60]}...")
+        print(f"  Processed: {title[:60]}...")
 
     return publications
 
 
 def main():
     print("=" * 60)
-    print("Google Scholar Publication Sync")
+    print("Google Scholar Publication Sync (via SerpAPI)")
     print("=" * 60)
 
     # Fetch from Google Scholar
     scholar_pubs = fetch_from_scholar()
     print(f"\nFetched {len(scholar_pubs)} publications from Google Scholar.")
 
-    # Combine: scholar pubs first (sorted by year desc), then manual entries
+    # Sort by year descending
     scholar_pubs.sort(key=lambda p: p.get("year", "0"), reverse=True)
 
     result = {
