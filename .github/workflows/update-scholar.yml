@@ -2,8 +2,8 @@ name: Update Publications from Google Scholar
 
 on:
   schedule:
-    # Run every day at 6:00 AM UTC (adjust as you like)
-    - cron: '0 6 * * *'
+    # Run every two weeks (1st and 15th of each month) at 6:00 AM UTC
+    - cron: '0 6 1,15 * *'
   workflow_dispatch:  # Allow manual trigger from GitHub UI
 
 permissions:
@@ -21,15 +21,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install scholarly free-proxy
-
       - name: Fetch Google Scholar publications
         run: python scripts/update_publications.py
         env:
-          SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           PYTHONUNBUFFERED: '1'
-        timeout-minutes: 5
+        timeout-minutes: 3
 
       - name: Check for changes
         id: changes
