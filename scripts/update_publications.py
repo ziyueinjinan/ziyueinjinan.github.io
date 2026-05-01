@@ -31,13 +31,13 @@ YOUR_FIRST_INITIAL = "Z"
 MANUAL_ENTRIES = [
     {
         "title": "Where State, Market, and Community Meet: Village Doctors and the Governance of Rural Health in China",
-        "authors": "Wang, Z., Gao, Z., Zou, X., Zhang, P., Rice, K., Bouey, J., & Liu, X.",
-        "journal": "Revise & Resubmit: Social Science & Medicine",
-        "year": "",
+        "authors": "Wang, Z., Gao, Z., Zou, X., Zhang, P., Ma, X., Rice, K., Bouey, J., & Liu, X.",
+        "journal": "Social Science & Medicine, 119294 (2026)",
+        "year": "2026",
         "doi": "",
-        "type": ["review", "first"],
-        "badge": "R&R",
-        "badge_class": "badge-review"
+        "type": ["first", "highlight"],
+        "badge": "SSM",
+        "badge_class": "badge-lancet"
     },
     {
         "title": "Neo-Familist Values and Health-Seeking Behaviours Among Older Adults in Rural China",
@@ -83,6 +83,11 @@ MANUAL_ENTRIES = [
 
 # Overrides: map a paper title (lowercased) to extra metadata.
 OVERRIDES = {
+    "where state, market, and community meet": {
+        "extra_types": ["highlight"],
+        "badge": "SSM",
+        "badge_class": "badge-lancet"
+    },
     "older adults' experiences of health seeking in rural areas": {
         "extra_types": ["highlight"],
         "badge": "2025",
@@ -247,12 +252,30 @@ def main():
     # Sort by year descending
     scholar_pubs.sort(key=lambda p: p.get("year", "0"), reverse=True)
 
+    # --- Deduplicate: remove manual entries that now appear on Google Scholar ---
+    # This handles the case where a paper was under review (manual) and is now
+    # published (auto-fetched). We compare by checking if the first 40 chars of
+    # the title match (case-insensitive).
+    scholar_titles = set()
+    for pub in scholar_pubs:
+        scholar_titles.add(pub["title"].lower()[:40])
+
+    filtered_manual = []
+    for entry in MANUAL_ENTRIES:
+        entry_key = entry["title"].lower()[:40]
+        if entry_key in scholar_titles:
+            print(f"  Dedup: skipping manual entry '{entry['title'][:50]}...' (now on Google Scholar)")
+        else:
+            filtered_manual.append(entry)
+
+    print(f"  Manual entries: {len(MANUAL_ENTRIES)} total, {len(filtered_manual)} after dedup")
+
     result = {
         "last_updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "scholar_id": SCHOLAR_ID,
         "scholar_url": f"https://scholar.google.com/citations?user={SCHOLAR_ID}&hl=en",
         "publications": scholar_pubs,
-        "manual_entries": MANUAL_ENTRIES
+        "manual_entries": filtered_manual
     }
 
     # Write JSON
@@ -260,9 +283,9 @@ def main():
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"\nWrote {len(scholar_pubs) + len(MANUAL_ENTRIES)} total entries to {OUTPUT_FILE}")
+    print(f"\nWrote {len(scholar_pubs) + len(filtered_manual)} total entries to {OUTPUT_FILE}")
     print(f"  - {len(scholar_pubs)} from Google Scholar")
-    print(f"  - {len(MANUAL_ENTRIES)} manual entries")
+    print(f"  - {len(filtered_manual)} manual entries")
     print("Done!")
 
 
