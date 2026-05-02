@@ -35,9 +35,10 @@ MANUAL_ENTRIES = [
         "journal": "Social Science & Medicine, 119294 (2026)",
         "year": "2026",
         "doi": "",
-        "type": ["first", "highlight"],
-        "badge": "SSM",
-        "badge_class": "badge-lancet"
+        "scholar_link": "",
+        "type": ["first"],
+        "badge": "",
+        "badge_class": ""
     },
     {
         "title": "Neo-Familist Values and Health-Seeking Behaviours Among Older Adults in Rural China",
@@ -83,37 +84,15 @@ MANUAL_ENTRIES = [
 
 # Overrides: map a paper title (lowercased) to extra metadata.
 OVERRIDES = {
-    "where state, market, and community meet": {
-        "extra_types": ["highlight"],
-        "badge": "SSM",
-        "badge_class": "badge-lancet"
-    },
-    "older adults' experiences of health seeking in rural areas": {
-        "extra_types": ["highlight"],
-        "badge": "2025",
-        "badge_class": "badge-lancet"
-    },
     "evaluation of the mcgill-tongji blended education program": {
         "extra_types": ["highlight"],
         "badge": "Award Winner",
         "badge_class": "badge-award"
     },
-    "longitudinal associations between self-reported vision impairment": {
-        "extra_types": ["highlight"],
-    },
-    "time trends in tuberculosis mortality across the brics": {
-        "extra_types": ["highlight"],
-        "badge": "EClinicalMedicine",
-        "badge_class": "badge-lancet"
-    },
-    "global, regional, and national burden of diabetes": {
-        "extra_types": ["highlight"],
-        "badge": "The Lancet",
-        "badge_class": "badge-lancet"
-    },
     "progress on catastrophic health expenditure in china": {
         "extra_types": ["first"],  # equal contribution
     },
+    # Add more overrides here as needed. Only use "highlight" for award-winning papers.
 }
 
 # ---------------------------------------------------------------------------
@@ -204,8 +183,8 @@ def fetch_from_scholar():
             pub_types.append("first")
 
         # Check for overrides
-        badge = year if year else ""
-        badge_class = "badge-lancet" if year else ""
+        badge = ""
+        badge_class = ""
         title_lower = title.lower()
         for key, override in OVERRIDES.items():
             if title_lower.startswith(key):
@@ -216,13 +195,19 @@ def fetch_from_scholar():
                     badge_class = override["badge_class"]
                 break
 
-        # Get link
+        # Get links — separate DOI and Google Scholar link
         doi = ""
+        scholar_link = ""
         link = article.get("link", "")
         if "doi.org" in link:
             doi = link
         elif link:
-            doi = link  # Use whatever link is available
+            scholar_link = link  # Google Scholar or publisher link
+
+        # SerpAPI sometimes provides citation_id for direct Scholar link
+        citation_id = article.get("citation_id", "")
+        if citation_id and not scholar_link:
+            scholar_link = f"https://scholar.google.com/citations?view_op=view_citation&hl=en&user={SCHOLAR_ID}&citation_for_view={SCHOLAR_ID}:{citation_id}"
 
         publications.append({
             "title": title,
@@ -230,6 +215,7 @@ def fetch_from_scholar():
             "journal": journal_str,
             "year": year,
             "doi": doi,
+            "scholar_link": scholar_link,
             "type": list(set(pub_types)),
             "badge": badge,
             "badge_class": badge_class
