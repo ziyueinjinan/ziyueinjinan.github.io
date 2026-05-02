@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-02T10:39:13Z",
+  "last_updated": "2026-05-02T13:14:37Z",
   "scholar_id": "HC7mkqgAAAAJ",
   "scholar_url": "https://scholar.google.com/citations?user=HC7mkqgAAAAJ&hl=en",
   "publications": [
@@ -8,7 +8,7 @@
       "authors": "Z Wang, Z Gao, X Zou, P Zhang, X Ma, K Rice, J Bouey, X Liu",
       "journal": "(2026)",
       "year": "2026",
-      "doi": "",
+      "doi": "https://doi.org/10.1016/j.socscimed.2025.119294",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:mVmsd5A6BfQC",
       "type": [
         "first"
@@ -58,7 +58,7 @@
       "authors": "S Zhou, Z Liang, Q Li, S Song, Z Wang, M Xu, Y Jin, ZJ Zheng",
       "journal": "(2025)",
       "year": "2025",
-      "doi": "",
+      "doi": "https://doi.org/10.1016/j.jad.2024.09.140",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:Zph67rFs4hoC",
       "type": [],
       "badge": "",
@@ -69,7 +69,7 @@
       "authors": "Z Wang, X Zou, Z Gao, H Bergman, P Zhang, I Vedel, X Liu",
       "journal": "(2024)",
       "year": "2024",
-      "doi": "",
+      "doi": "https://doi.org/10.1370/afm.22.s1.6960",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:ULOm3_A8WrAC",
       "type": [
         "first"
@@ -82,7 +82,7 @@
       "authors": "C Su, Z Wang, X Dong, X Ma",
       "journal": "(2024)",
       "year": "2024",
-      "doi": "",
+      "doi": "https://doi.org/10.1016/j.puhe.2024.05.021",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:kNdYIx-mwKoC",
       "type": [],
       "badge": "",
@@ -93,13 +93,14 @@
       "authors": "Z Wang, X Zhao, H Shen, H Wang, G Cheng, YN Gao, W Zuo, Z Xu, ...",
       "journal": "(2024)",
       "year": "2024",
-      "doi": "",
+      "doi": "https://doi.org/10.1002/hcs2.107",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:KlAtU1dfN6UC",
       "type": [
-        "first"
+        "first",
+        "highlight"
       ],
-      "badge": "",
-      "badge_class": ""
+      "badge": "Award Winner",
+      "badge_class": "badge-award"
     },
     {
       "title": "Global, regional, and national age-specific progress towards the 2020 milestones of the WHO End TB Strategy: a systematic analysis for the Global Burden of Disease Study 2021",
@@ -128,7 +129,7 @@
       "authors": "Z Wang, N Congdon, X Ma",
       "journal": "(2023)",
       "year": "2023",
-      "doi": "",
+      "doi": "http://dx.doi.org/10.1136/bjo-2022-321577",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:roLk4NBRz8UC",
       "type": [
         "first"
@@ -163,7 +164,7 @@
       "authors": "Y Jin, H So, E Cerin, A Barnett, S Mubarik, K Hezam, X Feng, Z Wang, ...",
       "journal": "(2023)",
       "year": "2023",
-      "doi": "",
+      "doi": "https://doi.org/10.3389/fnut.2022.1035439",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:hqOjcs7Dif8C",
       "type": [],
       "badge": "",
@@ -174,7 +175,7 @@
       "authors": "Z Zou, G Liu, SI Hay, S Basu, UI Belgaumi, A Dhali, S Dhingra, G Fekadu, ...",
       "journal": "(2022)",
       "year": "2022",
-      "doi": "",
+      "doi": "https://doi.org/10.1016/j.eclinm.2022.101646",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:Se3iqnhoufwC",
       "type": [],
       "badge": "",
@@ -207,7 +208,7 @@
       "authors": "M Li, Z Wang, B Zhang, T Wei, D Hu, X Liu",
       "journal": "(2022)",
       "year": "2022",
-      "doi": "",
+      "doi": "https://doi.org/10.34172/ijhpm.2022.6335",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:eQOLeE2rZwMC",
       "type": [],
       "badge": "",
@@ -218,7 +219,7 @@
       "authors": "M Li, Z Wang, B Zhang, T Wei, D Hu, X Liu",
       "journal": "(2022)",
       "year": "2022",
-      "doi": "",
+      "doi": "https://doi.org/10.1186/s12874-021-01498-1",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:WF5omc3nYNoC",
       "type": [],
       "badge": "",
@@ -240,7 +241,7 @@
       "authors": "ZY Wang, LJ Zhang, YH Liu, WX Jiang, JY Jia, SL Tang, XY Liu",
       "journal": "(2021)",
       "year": "2021",
-      "doi": "",
+      "doi": "https://doi.org/10.1186/s40249-021-00855-y",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:Y0pCki6q_DkC",
       "type": [
         "first"
@@ -253,7 +254,7 @@
       "authors": "X Liu, Z Wang, H Zhang, Q Meng",
       "journal": "(2021)",
       "year": "2021",
-      "doi": "",
+      "doi": "https://doi.org/10.7189/jogh.11.08005",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:W7OEmFMy1HYC",
       "type": [],
       "badge": "",
@@ -264,7 +265,7 @@
       "authors": "ZY Wang, LJ Zhang, YH Liu, WX Jiang, SL Tang, XY Liu",
       "journal": "(2021)",
       "year": "2021",
-      "doi": "",
+      "doi": "https://doi.org/10.1186/s40249-021-00810-x",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:zYLM7Y9cAGgC",
       "type": [
         "first"
@@ -301,7 +302,7 @@
       "authors": "X Ma, Z Wang, X Liu",
       "journal": "(2019)",
       "year": "2019",
-      "doi": "",
+      "doi": "https://doi.org/10.3390/ijerph16234775",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:qjMakFHDy7sC",
       "type": [
         "first"
@@ -314,7 +315,7 @@
       "authors": "Z Wang, W Jiang, Y Liu, L Zhang, A Zhu, S Tang, X Liu",
       "journal": "(2019)",
       "year": "2019",
-      "doi": "",
+      "doi": "https://doi.org/10.1186/s12960-019-0420-2",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:d1gkVwhDpl0C",
       "type": [
         "first"
@@ -327,7 +328,7 @@
       "authors": "Z Wang, Y He, Y Zheng",
       "journal": "(2019)",
       "year": "2019",
-      "doi": "",
+      "doi": "https://doi.org/10.3390/ijerph16203859",
       "scholar_link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=HC7mkqgAAAAJ&pagesize=100&sortby=pubdate&citation_for_view=HC7mkqgAAAAJ:9yKSN-GCB0IC",
       "type": [
         "first"
