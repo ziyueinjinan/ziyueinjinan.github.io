@@ -72,10 +72,9 @@
 
             <!-- ========== PUBLISHED — FIRST AUTHOR ========== -->
 
-            <li class="pub-item" data-type="first highlight">
+            <li class="pub-item" data-type="first">
                 <div class="pub-title">
                     Older adults' experiences of health seeking in rural areas in low- and middle-income countries: a systematic review of qualitative studies
-                    <span class="pub-badge badge-lancet">2025</span>
                 </div>
                 <div class="pub-authors"><span class="me">Wang, Z.</span>, Ma, X., Su, C., Zhang, Y., Zou, X., Balogun, M., ... &amp; Vedel, I.</div>
                 <div class="pub-journal">Health Policy and Planning, czaf061 (2025)</div>
@@ -99,7 +98,7 @@
                 <div class="pub-links"><a href="https://doi.org/10.1370/afm.22.s1.6960" target="_blank">DOI &rarr;</a></div>
             </li>
 
-            <li class="pub-item" data-type="first highlight">
+            <li class="pub-item" data-type="first">
                 <div class="pub-title">Longitudinal associations between self-reported vision impairment and all-cause mortality: a nationally representative cohort study among older Chinese adults</div>
                 <div class="pub-authors"><span class="me">Wang, Z.</span>, Congdon, N., Ma, X.</div>
                 <div class="pub-journal">British Journal of Ophthalmology (2022)</div>
@@ -157,10 +156,9 @@
                 <div class="pub-links"><a href="https://doi.org/10.3389/fnut.2022.1035439" target="_blank">DOI &rarr;</a></div>
             </li>
 
-            <li class="pub-item" data-type="highlight">
+            <li class="pub-item" data-type="">
                 <div class="pub-title">
                     Time trends in tuberculosis mortality across the BRICS: an age-period-cohort analysis for the GBD 2019
-                    <span class="pub-badge badge-lancet">EClinicalMedicine</span>
                 </div>
                 <div class="pub-authors">Zou Z., Liu G., Hay S.I., ... <span class="me">Wang, Z.</span>, ... Kyu H.H., Huang Y.</div>
                 <div class="pub-journal">EClinicalMedicine, 53 (2022)</div>
@@ -195,10 +193,9 @@
                 <div class="pub-links"><a href="https://doi.org/10.3390/ijerph16234775" target="_blank">DOI &rarr;</a></div>
             </li>
 
-            <li class="pub-item" data-type="highlight">
+            <li class="pub-item" data-type="">
                 <div class="pub-title">
                     Global, regional, and national burden of diabetes (GBD Collaborator Network)
-                    <span class="pub-badge badge-lancet">The Lancet</span>
                 </div>
                 <div class="pub-authors">GBD 2021 Diabetes Collaborators (incl. <span class="me">Wang, Z.</span>)</div>
                 <div class="pub-journal">The Lancet &mdash; projected 1.31 billion people will have diabetes by 2050</div>
@@ -206,13 +203,12 @@
 
             <!-- ========== UNDER REVIEW ========== -->
 
-            <li class="pub-item" data-type="review first">
+            <li class="pub-item" data-type="first">
                 <div class="pub-title">
                     Where State, Market, and Community Meet: Village Doctors and the Governance of Rural Health in China
-                    <span class="pub-badge badge-review">R&amp;R</span>
                 </div>
-                <div class="pub-authors"><span class="me">Wang, Z.</span>, Gao, Z., Zou, X., Zhang, P., Rice, K., Bouey, J., &amp; Liu, X.</div>
-                <div class="pub-journal">Revise &amp; Resubmit: Social Science &amp; Medicine</div>
+                <div class="pub-authors"><span class="me">Wang, Z.</span>, Gao, Z., Zou, X., Zhang, P., Ma, X., Rice, K., Bouey, J., &amp; Liu, X.</div>
+                <div class="pub-journal">Social Science &amp; Medicine, 119294 (2026)</div>
             </li>
 
             <li class="pub-item" data-type="review first">
@@ -285,9 +281,10 @@ function filterPubs(type, btn) {
      */
 
     function highlightMyName(authors) {
-        // Highlight "Wang, Z." or "Wang, Z" in the author string
+        // Highlight "Z Wang" or "Z. Wang" (Google Scholar format)
+        // and "Wang, Z." or "Wang, Z" (manual entry format)
         return authors.replace(
-            /(Wang,?\s*Z\.?)/gi,
+            /(Z\.?\s+Wang|Wang,?\s*Z\.?)/gi,
             '<span class="me">$1</span>'
         );
     }
@@ -305,12 +302,17 @@ function filterPubs(type, btn) {
             badgeHtml = `<span class="pub-badge ${cls}">${pub.badge}</span>`;
         }
 
-        // Build link: prefer DOI, fall back to Google Scholar link
+        // Build links: show both DOI and Google Scholar when available
         let linksHtml = '';
+        const links = [];
         if (hasDoiLink) {
-            linksHtml = `<div class="pub-links"><a href="${pub.doi}" target="_blank">DOI &rarr;</a></div>`;
-        } else if (hasScholarLink) {
-            linksHtml = `<div class="pub-links"><a href="${pub.scholar_link}" target="_blank">Google Scholar &rarr;</a></div>`;
+            links.push(`<a href="${pub.doi}" target="_blank">DOI &rarr;</a>`);
+        }
+        if (hasScholarLink) {
+            links.push(`<a href="${pub.scholar_link}" target="_blank">Google Scholar &rarr;</a>`);
+        }
+        if (links.length > 0) {
+            linksHtml = `<div class="pub-links">${links.join(' &nbsp;|&nbsp; ')}</div>`;
         }
 
         const journalStyle = isWorking ? ' style="font-style: normal; color: var(--text-light);"' : '';
