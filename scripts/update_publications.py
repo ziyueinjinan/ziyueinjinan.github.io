@@ -14,6 +14,7 @@ Output:
 
 import json
 import os
+import re
 import sys
 import time
 import urllib.request
@@ -82,7 +83,7 @@ MANUAL_ENTRIES = [
     }
 ]
 
-# Overrides: map a paper title (lowercased) to extra metadata.
+# Overrides: map a paper title (lowercased, dashes normalized) to extra metadata.
 OVERRIDES = {
     "evaluation of the mcgill-tongji blended education program": {
         "extra_types": ["highlight"],
@@ -93,6 +94,28 @@ OVERRIDES = {
         "extra_types": ["first"],  # equal contribution
     },
     # Add more overrides here as needed. Only use "highlight" for award-winning papers.
+}
+
+# Known DOIs: map partial title (lowercased, first 40 chars) to DOI URL.
+# SerpAPI doesn't return DOIs from the author profile endpoint, so we maintain them here.
+KNOWN_DOIS = {
+    "where state, market, and community meet": "https://doi.org/10.1016/j.socscimed.2025.119294",
+    "older adults' experiences of health seek": "https://doi.org/10.1093/heapol/czaf061",
+    "evaluation of the mcgill": "https://doi.org/10.1002/hcs2.107",
+    "understanding the care for older people": "https://doi.org/10.1370/afm.22.s1.6960",
+    "longitudinal associations between self-r": "http://dx.doi.org/10.1136/bjo-2022-321577",
+    "the effectiveness of e-learning in conti": "https://doi.org/10.1186/s40249-021-00855-y",
+    "process evaluation of e-learning in cont": "https://doi.org/10.1186/s40249-021-00810-x",
+    "transforming tuberculosis (tb) service de": "https://doi.org/10.1186/s12960-019-0420-2",
+    "probiotics for the treatment of bacteria": "https://doi.org/10.3390/ijerph16203859",
+    "association of cumulative average sensor": "https://doi.org/10.1016/j.jad.2024.09.140",
+    "experiences of seeking diabetic eye care": "https://doi.org/10.1016/j.puhe.2024.05.021",
+    "the temporal trend of disease burden att": "https://doi.org/10.3389/fnut.2022.1035439",
+    "time trends in tuberculosis mortality ac": "https://doi.org/10.1016/j.eclinm.2022.101646",
+    "job performance of medical graduates wit": "https://doi.org/10.34172/ijhpm.2022.6335",
+    "sample attrition analysis in a prospecti": "https://doi.org/10.1186/s12874-021-01498-1",
+    "measuring and evaluating progress toward": "https://doi.org/10.7189/jogh.11.08005",
+    "progress on catastrophic health expendit": "https://doi.org/10.3390/ijerph16234775",
 }
 
 # ---------------------------------------------------------------------------
@@ -182,12 +205,14 @@ def fetch_from_scholar():
         if is_first:
             pub_types.append("first")
 
+        # Normalize title for matching: replace all dash variants with hyphen
+        title_normalized = re.sub(r'[‐-―−﹘﹣－]', '-', title.lower())
+
         # Check for overrides
         badge = ""
         badge_class = ""
-        title_lower = title.lower()
         for key, override in OVERRIDES.items():
-            if title_lower.startswith(key):
+            if title_normalized.startswith(key):
                 pub_types.extend(override.get("extra_types", []))
                 if "badge" in override:
                     badge = override["badge"]
@@ -208,6 +233,14 @@ def fetch_from_scholar():
         citation_id = article.get("citation_id", "")
         if citation_id and not scholar_link:
             scholar_link = f"https://scholar.google.com/citations?view_op=view_citation&hl=en&user={SCHOLAR_ID}&citation_for_view={SCHOLAR_ID}:{citation_id}"
+
+        # Look up known DOIs if SerpAPI didn't provide one
+        if not doi:
+            title_key = title.lower()[:40]
+            for known_key, known_doi in KNOWN_DOIS.items():
+                if title_key.startswith(known_key[:35]):
+                    doi = known_doi
+                    break
 
         publications.append({
             "title": title,
