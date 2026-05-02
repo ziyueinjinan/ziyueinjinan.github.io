@@ -296,6 +296,7 @@ function filterPubs(type, btn) {
         const types = (pub.type || []).join(' ');
         const isWorking = types.includes('working');
         const hasDoiLink = pub.doi && pub.doi.trim() !== '';
+        const hasScholarLink = pub.scholar_link && pub.scholar_link.trim() !== '';
         const hasBadge = pub.badge && pub.badge.trim() !== '';
 
         let badgeHtml = '';
@@ -304,9 +305,12 @@ function filterPubs(type, btn) {
             badgeHtml = `<span class="pub-badge ${cls}">${pub.badge}</span>`;
         }
 
-        let doiHtml = '';
+        // Build link: prefer DOI, fall back to Google Scholar link
+        let linksHtml = '';
         if (hasDoiLink) {
-            doiHtml = `<div class="pub-links"><a href="${pub.doi}" target="_blank">DOI &rarr;</a></div>`;
+            linksHtml = `<div class="pub-links"><a href="${pub.doi}" target="_blank">DOI &rarr;</a></div>`;
+        } else if (hasScholarLink) {
+            linksHtml = `<div class="pub-links"><a href="${pub.scholar_link}" target="_blank">Google Scholar &rarr;</a></div>`;
         }
 
         const journalStyle = isWorking ? ' style="font-style: normal; color: var(--text-light);"' : '';
@@ -316,7 +320,7 @@ function filterPubs(type, btn) {
                 <div class="pub-title">${pub.title} ${badgeHtml}</div>
                 <div class="pub-authors">${highlightMyName(pub.authors)}</div>
                 <div class="pub-journal"${journalStyle}>${pub.journal}</div>
-                ${doiHtml}
+                ${linksHtml}
             </li>`;
     }
 
