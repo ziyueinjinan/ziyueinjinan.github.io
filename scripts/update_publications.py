@@ -121,15 +121,26 @@ KNOWN_DOIS = {
 # ---------------------------------------------------------------------------
 
 
-def serpapi_request(params):
-    """Make a request to SerpAPI and return JSON response."""
+def serpapi_request(params, max_retries=3):
+    """Make a request to SerpAPI and return JSON response, with retry logic."""
     base_url = "https://serpapi.com/search.json"
     query_string = urllib.parse.urlencode(params)
     url = f"{base_url}?{query_string}"
 
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=30) as response:
-        return json.loads(response.read().decode("utf-8"))
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=60) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            print(f"  Request failed (attempt {attempt}/{max_retries}): {e}")
+            if attempt < max_retries:
+                wait = attempt * 5  # 5s, 10s, 15s
+                print(f"  Retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                print("  All retries exhausted. Raising error.")
+                raise
 
 
 def fetch_from_scholar():
