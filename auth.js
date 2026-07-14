@@ -14,7 +14,10 @@
 const SITE_PASSWORD = '666593';
 
 function checkAuth() {
-    return sessionStorage.getItem('site_auth') === 'true';
+    // Password protection is currently DISABLED — the site opens without a password.
+    // To re-enable it, delete the line below and uncomment the original one.
+    return true;
+    // return sessionStorage.getItem('site_auth') === 'true';
 }
 
 function unlock() {
